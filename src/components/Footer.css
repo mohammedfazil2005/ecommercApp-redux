@@ -1,0 +1,14 @@
+footer{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+
+.c-div p{
+    width: 300px;
+}
+.inp-div{
+    display: flex;
+    gap: 2px;
+}
