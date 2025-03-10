@@ -7,12 +7,14 @@ import Wishlist from './pages/Wishlist'
 import View from './pages/View'
 import PNF from './pages/PNF'
 import Footer from './components/Footer'
+import AnimatedCursor from 'react-animated-cursor'
 
 function App() {
  
 
   return (
     <>
+    {/* <AnimatedCursor color='16,16,28'/> */}
      <Routes>
       <Route path='/' element={<Home/>}/>
       <Route path='/cart' element={<Cart/>}/>

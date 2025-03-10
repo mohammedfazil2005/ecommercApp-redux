@@ -1,7 +1,21 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
+import { useDispatch, useSelector } from 'react-redux'
+import { addToCart } from '../redux/slices/cartSlice'
 
 const Cart = () => {
+  const cartProducts=useSelector(state=>state.cart)
+
+  const dispatch=useDispatch()
+
+  const [total,setTotal]=useState(0)
+
+  
+  useEffect(()=>{
+   setTotal(cartProducts?.reduce((a,b)=>a+b['totalPrice'],0))
+  },[cartProducts])
+
+
   return (
     <>
     <Header/>
@@ -22,25 +36,27 @@ const Cart = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr className='text-center '>
-                  <td>1</td>
-                  <td>Product</td>
+                {cartProducts?.length>0?cartProducts?.map((a,index)=>(
+                  <tr className='text-center '>
+                  <td>{index+1}</td>
+                  <td>{a.title}</td>
                   <td>
                     <div className='flex justify-center'>
-                    <img style={{width:'100px'}} src="https://www.pngmart.com/files/23/Gorillaz-PNG-File.png" alt="" />
+                    <img style={{width:'100px'}} src={a.thumbnail} alt="" />
                     </div>
                   </td>
                   <td>
                     <div className="flex justify-center">
                       <button className='font-bold'>-</button>
-                      <input type="text"style={{width:"40px"}} className='border m-2 font-bold rounded text-center' value={0} readOnly/>
-                      <button className='font-bold'>+</button>
+                      <input type="text"style={{width:"40px"}} className='border m-2 font-bold rounded text-center' value={a.quantity} readOnly/>
+                      <button className='font-bold' onClick={()=>dispatch(addToCart(a))}>+</button>
                     </div>
                   </td>
-                  <td>price</td>
+                  <td>{a.totalPrice}</td>
                  <td> <button><i class="fa-solid fa-trash text-red-600"></i></button></td>
                   
                 </tr>
+                )):""}
                
               </tbody>
             </table>
@@ -50,7 +66,7 @@ const Cart = () => {
                 </div>
           </div>
           <div className='border rounded shadow p-4'>
-            <h1 className='text-2xl font-bold'>Total Amount <span className='text-red-400'>$ 9.99</span></h1>
+            <h1 className='text-2xl font-bold'>Total Amount <span className='text-red-400'>$ {total}</span></h1>
             <hr className='mt-2'/>
             <button className='bg-green-600 text-white border p-2 rounded border w-full mt-3'>Check out</button>
           </div>
