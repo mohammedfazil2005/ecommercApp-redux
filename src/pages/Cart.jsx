@@ -1,14 +1,34 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import { useDispatch, useSelector } from 'react-redux'
-import { addToCart } from '../redux/slices/cartSlice'
+import { addToCart, decrementCart, emptyCart, removeFromCart } from '../redux/slices/cartSlice'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Cart = () => {
   const cartProducts=useSelector(state=>state.cart)
 
   const dispatch=useDispatch()
+  const navigate=useNavigate()
 
   const [total,setTotal]=useState(0)
+
+  const onItemDecrement=(product)=>{
+    if(product.quantity>1){
+      dispatch(decrementCart(product))
+    }
+  }
+
+  const onCheckout=()=>{
+
+    if(total>0){
+      dispatch(emptyCart())
+      alert("Order success!")
+      navigate('/')
+    }
+     
+      
+    
+  }
 
   
   useEffect(()=>{
@@ -47,13 +67,13 @@ const Cart = () => {
                   </td>
                   <td>
                     <div className="flex justify-center">
-                      <button className='font-bold'>-</button>
+                      <button className='font-bold' onClick={()=>onItemDecrement(a)}>-</button>
                       <input type="text"style={{width:"40px"}} className='border m-2 font-bold rounded text-center' value={a.quantity} readOnly/>
                       <button className='font-bold' onClick={()=>dispatch(addToCart(a))}>+</button>
                     </div>
                   </td>
                   <td>{a.totalPrice}</td>
-                 <td> <button><i class="fa-solid fa-trash text-red-600"></i></button></td>
+                 <td> <button  onClick={()=>dispatch(removeFromCart(a.id))}><i class="fa-solid fa-trash text-red-600"></i></button></td>
                   
                 </tr>
                 )):""}
@@ -61,14 +81,14 @@ const Cart = () => {
               </tbody>
             </table>
             <div className="float-right">
-                  <button className='p-1 rounded bg-red-600 me-3 text-white shadow'>EMPTY CART</button>
-                  <button className='p-1 rounded bg-blue-500'>SHOP MORE</button>
+                  <button className='p-1 rounded bg-red-600 me-3 text-white shadow' onClick={()=>dispatch(emptyCart())}>EMPTY CART</button>
+                 <Link to={'/'}> <button className='p-1 rounded bg-blue-500'>SHOP MORE</button></Link>
                 </div>
           </div>
           <div className='border rounded shadow p-4'>
             <h1 className='text-2xl font-bold'>Total Amount <span className='text-red-400'>$ {total}</span></h1>
             <hr className='mt-2'/>
-            <button className='bg-green-600 text-white border p-2 rounded border w-full mt-3'>Check out</button>
+            <button className='bg-green-600 text-white border p-2 rounded border w-full mt-3'  onClick={()=>onCheckout()}>Check out</button>
           </div>
         </div>
       </div>

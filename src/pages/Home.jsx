@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import { Link } from 'react-router-dom'
 import { fetchAllProducts } from '../redux/slices/productSlice'
@@ -11,7 +11,32 @@ const Home = () => {
 
   const {allProducts,isLoading,errorMessage}=useSelector(state=>state.productsFetch)
 
+  const [currentPage,setCurrentPage]=useState(1)
+
   console.log(allProducts)
+
+  let productPerPage=8
+  let totalPage=Math.ceil(allProducts?.length / productPerPage)
+
+  let lastIndexOfCurrentPage=currentPage*productPerPage
+  let firstIndexOfCurrentPage=lastIndexOfCurrentPage-productPerPage
+
+
+  let pageintaedArray=allProducts?.slice(firstIndexOfCurrentPage,lastIndexOfCurrentPage)
+
+  
+  const onBackward=()=>{
+    if(currentPage>1){
+      setCurrentPage(currentPage-1)
+    }
+  }
+
+  const onForward=()=>{
+    if(currentPage<totalPage){
+      setCurrentPage(currentPage+1)
+    }
+  }
+
 
   useEffect(()=>{
     dispatch(fetchAllProducts() )
@@ -31,10 +56,10 @@ const Home = () => {
         </div>
 
         ):
-
+        <>
         <div className='grid grid-cols-4 gap-3 m-2'>
           {
-             allProducts?.length>0?allProducts?.map((a)=>(
+             allProducts?.length>0?pageintaedArray?.map((a)=>(
               <div className="">
                <div className='border shadow p-3'>
                  <img src={a.thumbnail} alt="" />
@@ -48,6 +73,12 @@ const Home = () => {
           
           }
         </div>
+        <div className='text-center font-bold m-5 text-xl'>
+          <span onClick={()=>onBackward()}><i className='fa-solid fa-backward me-3 cursor-pointer'></i></span>
+          <span className='m-3'>{currentPage} of {totalPage}</span>
+          <span onClick={()=>onForward()}><i className='fa-solid fa-forward ms-3 cursor-pointer'></i></span>
+        </div>
+        </>
         
     
           
